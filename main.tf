@@ -24,8 +24,8 @@ resource "aws_security_group" "ec2_security_group" {
 
   ingress {
     from_port   = 0
-    to_port     = 65535 # Allow all ports
-    protocol    = "-1"  # All protocols
+    to_port     = 0    # Allow all ports
+    protocol    = "-1" # All protocols
     cidr_blocks = ["0.0.0.0/0"]
   }
 
