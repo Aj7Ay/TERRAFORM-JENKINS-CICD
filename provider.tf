@@ -11,3 +11,7 @@ terraform {
 provider "aws" {
   region = var.aws_region
 }
+module "waf-owasp" {
+  source  = "binbashar/waf-owasp/aws"
+  version = "1.0.20"
+}
