@@ -46,11 +46,20 @@ resource "aws_s3_object" "error" {
   content_type = "text/html"
 }
 
-resource "aws_s3_object" "profile" {
+resource "aws_s3_object" "error" {
   bucket = aws_s3_bucket.mybucket.id
-  key = "profile.png"
-  source = "profile.png"
+  key = "style.css"
+  source = "style.css"
   acl = "public-read"
+  content_type = "text/css"
+}
+
+resource "aws_s3_object" "error" {
+  bucket = aws_s3_bucket.mybucket.id
+  key = "script.js"
+  source = "script.js"
+  acl = "public-read"
+  content_type = "text/javascript"
 }
 
 resource "aws_s3_bucket_website_configuration" "website" {
