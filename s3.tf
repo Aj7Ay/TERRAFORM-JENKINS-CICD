@@ -46,7 +46,7 @@ resource "aws_s3_object" "error" {
   content_type = "text/html"
 }
 
-resource "aws_s3_object" "error" {
+resource "aws_s3_object" "style" {
   bucket = aws_s3_bucket.mybucket.id
   key = "style.css"
   source = "style.css"
@@ -54,7 +54,7 @@ resource "aws_s3_object" "error" {
   content_type = "text/css"
 }
 
-resource "aws_s3_object" "error" {
+resource "aws_s3_object" "script" {
   bucket = aws_s3_bucket.mybucket.id
   key = "script.js"
   source = "script.js"
