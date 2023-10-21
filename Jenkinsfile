@@ -4,9 +4,7 @@ pipeline{
         jdk 'jdk17'
         terraform 'terraform'
     }
-    environment {
-        SCANNER_HOME=tool 'sonar-scanner'
-    }
+   
     stages {
         stage('clean workspace'){
             steps{
@@ -23,14 +21,7 @@ pipeline{
                  sh 'terraform --version'
                 }
         }
-        stage("Sonarqube Analysis "){
-            steps{
-                withSonarQubeEnv('sonar-server') {
-                    sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=Terraform \
-                    -Dsonar.projectKey=Terraform '''
-                }
-            }
-        }
+        
         stage("quality gate"){
            steps {
                 script {
