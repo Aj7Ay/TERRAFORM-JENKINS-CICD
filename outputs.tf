@@ -3,5 +3,5 @@ output "websiteendpoint" {
 }
 
 output "public_ip" {
-  value = aws_instance.Ajay.public_ip
+  value = aws_instance.jeannoel.public_ip
 }
