@@ -1,12 +1,10 @@
-name: Deploy EKS Cluster
+name: Destroy EKS Cluster
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:  # Manually triggered workflow
 
 jobs:
-  deploy:
+  destroy:
     runs-on: ubuntu-latest
 
     steps:
@@ -18,48 +16,10 @@ jobs:
       with:
         terraform_version: 1.0.8  # Use the version you need
 
-    - name: Terraform Init
-      run: terraform init
-      working-directory: EKS  # Change this to your EKS cluster folder
-
-    - name: Terraform Validate
-      run: terraform validate
-      working-directory: EKS  # Change this to your EKS cluster folder
-
-    - name: Terraform Plan
-      run: terraform plan
-      working-directory: EKS  # Change this to your EKS cluster folder
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-    - name: Terraform Apply
-      run: terraform apply -auto-approve
-      working-directory: EKS  # Change this to your EKS cluster folder
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        
-  destroy:
-    runs-on: ubuntu-latest
-    needs: deploy
-    steps:
-    - name: Manual Approval
-      id: approval
-      run: |
-        echo "Do you want to destroy the EKS cluster?"
-        echo "If yes, then type 'yes' to confirm."
-        echo "If no, type 'no' to cancel."
-        echo "Approve and confirm:"
-        echo "::set-output name=confirm::${{ github.event.inputs.confirm }}"
-      env:
-        confirm: ${{ github.event.inputs.confirm }}
-      shell: bash
-
-    - name: Destroy EKS Cluster
-      if: steps.approval.outputs.confirm == 'yes'  # Only proceed if 'yes' is confirmed
+    - name: Terraform Destroy
       run: terraform destroy -auto-approve
       working-directory: EKS  # Change this to your EKS cluster folder
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
