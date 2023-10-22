@@ -1,11 +1,14 @@
-name: Destroy EKS Cluster
+name: Deploy and Destroy EKS Cluster
 
 on:
-  workflow_dispatch:  # Manually triggered workflow
+  push:
+    branches:
+      - main
 
 jobs:
-  destroy:
+  deploy:
     runs-on: ubuntu-latest
+    working-directory: EKS
 
     steps:
     - name: Checkout code
@@ -15,14 +18,25 @@ jobs:
       uses: hashicorp/setup-terraform@v1
       with:
         terraform_version: 1.0.8  # Use the version you need
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
     - name: Terraform Init
       run: terraform init
-      working-directory: EKS    
 
-    - name: Terraform Destroy
+    - name: Terraform Validate
+      run: terraform validate
+
+    - name: Terraform Plan
+      run: terraform plan
+
+    - name: Terraform Apply
+      run: terraform apply -auto-approve
+
+    - name: Terraform Destroy (optional)
       run: terraform destroy -auto-approve
-      working-directory: EKS  # Change this to your EKS cluster folder
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
+      if: ${{ github.event.inputs.destroy == 'true' }}
