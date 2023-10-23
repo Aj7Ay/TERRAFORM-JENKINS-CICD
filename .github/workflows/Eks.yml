@@ -48,7 +48,6 @@ jobs:
     - name: Confirm Destroy
       id: confirm
       run: echo "Confirmation: ${{ inputs.confirm }}"
-      shell: bash
 
     - name: Terraform Destroy
       if: steps.confirm.outputs.confirm == 'yes'  # Only proceed if 'yes' is confirmed
