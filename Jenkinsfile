@@ -4,15 +4,18 @@ pipeline{
         jdk 'jdk17'
         terraform 'terraform'
     }
-    stages{
-        stage('clean Workspace'){
+    environment {
+        SCANNER_HOME=tool 'sonar-scanner'
+    }
+    stages {
+        stage('clean workspace'){
             steps{
                 cleanWs()
             }
         }
-        stage('checkout from Git'){
+        stage('Checkout from Git'){
             steps{
-                git branch: 'main', url: 'https://github.com/Aj7Ay/TERRAFORM-JENKINS-CICD.git'
+                git branch: 'main', url: 'https://github.com/jnsdevops/TERRAFORM-JENKINS-CICD.git'
             }
         }
         stage('Terraform version'){
@@ -22,7 +25,7 @@ pipeline{
         }
         stage("Sonarqube Analysis "){
             steps{
-                withSonarQubeEnv('sonar-server') {
+                withSonarQubeEnv('sonar-server'){
                     sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=Terraform \
                     -Dsonar.projectKey=Terraform '''
                 }
@@ -31,11 +34,11 @@ pipeline{
         stage("quality gate"){
            steps {
                 script {
-                    waitForQualityGate abortPipeline: false, credentialsId: 'Sonar-token' 
+                    waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token' 
                 }
             } 
         }
-        stage('TRIVY FS SCAN') {
+        stage('TRIVY FS SCAN'){
             steps {
                 sh "trivy fs . > trivyfs.txt"
             }
@@ -45,7 +48,7 @@ pipeline{
                 sh 'chmod 777 website.sh'
             }
         }
-        stage('Terraform init'){
+        stage('Terraform init' ){
             steps{
                 sh 'terraform init'
             }
@@ -55,10 +58,15 @@ pipeline{
                 sh 'terraform plan'
             }
         }
+        stage('Trivy terraform scan'){
+            steps{
+                sh 'tfsec . --no-color'
+             }
+         }  
         stage('Terraform apply'){
             steps{
-                sh 'terraform ${action} --auto approve'
+                sh 'terraform apply --auto-approve'
             }
         }
     }
-}
+}   
