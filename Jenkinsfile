@@ -8,42 +8,42 @@ pipeline{
         SCANNER_HOME=tool 'sonar-scanner'
     }
     stages {
-        stage('clean workspace') {
+        stage('clean workspace'){
             steps{
                 cleanWs()
             }
         }
-        stage('Checkout from Git') {
+        stage('Checkout from Git'){
             steps{
                 git branch: 'main', url: 'https://github.com/jnsdevops/TERRAFORM-JENKINS-CICD.git'
             }
         }
-        stage('Terraform version') {
+        stage('Terraform version'){
              steps{
                  sh 'terraform --version'
                 }
         }
-        stage("Sonarqube Analysis ") {
+        stage("Sonarqube Analysis "){
             steps{
-                withSonarQubeEnv('sonar-server') {
+                withSonarQubeEnv('sonar-server'){
                     sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=Terraform \
                     -Dsonar.projectKey=Terraform '''
                 }
             }
         }
-        stage("quality gate") {
+        stage("quality gate"){
            steps {
                 script {
                     waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token' 
                 }
             } 
         }
-        stage('TRIVY FS SCAN') {
+        stage('TRIVY FS SCAN'){
             steps {
                 sh "trivy fs . > trivyfs.txt"
             }
         }
-        stage('Excutable permission to userdata') {
+        stage('Excutable permission to userdata'){
             steps{
                 sh 'chmod 777 website.sh'
             }
@@ -63,7 +63,6 @@ pipeline{
                 sh 'tfsec . --no-color'
              }
          }  
-
         stage('Terraform apply'){
             steps{
                 sh 'terraform apply --auto-approve'
