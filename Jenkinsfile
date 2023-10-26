@@ -32,21 +32,20 @@ pipeline{
             }
         }
 
-        stage("quality gate") {
+        stage("quality gate"){
            steps {
                 script {
                     waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token' 
                 }
             } 
         }
-        stage('TRIVY FS SCAN') {
+        stage('TRIVY FS SCAN'){
             steps {
                 sh "trivy fs . > trivyfs.txt"
             }
         }
     }
 }
-#Now add the below stages to your pipeline
        stage('Excutable permission to userdata'){
             steps{
                 sh 'chmod 777 website.sh'
