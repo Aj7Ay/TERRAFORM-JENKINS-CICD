@@ -58,5 +58,10 @@ pipeline{
                 sh 'terraform plan'
             }
         }
+        stage('Trivy terraform scan'){
+            steps{
+                sh 'tfsec . --no-color'
+             }
+         }  
     }
 }   
