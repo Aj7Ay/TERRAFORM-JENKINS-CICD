@@ -4,7 +4,9 @@ pipeline{
         jdk 'jdk17'
         terraform 'terraform'
     }
-   
+    environment {
+        SCANNER_HOME=tool 'sonar-scanner'
+    }
     stages {
         stage('clean workspace'){
             steps{
@@ -44,3 +46,19 @@ pipeline{
         }
     }
 }
+#Now add the below stages to your pipeline
+       stage('Excutable permission to userdata'){
+            steps{
+                sh 'chmod 777 website.sh'
+            }
+        }
+        stage('Terraform init'){
+            steps{
+                sh 'terraform init'
+            }
+        }
+        stage('Terraform plan'){
+            steps{
+                sh 'terraform plan'
+            }
+        }
